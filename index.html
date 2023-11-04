@@ -1,0 +1,111 @@
+<html>
+
+<head>
+    <style>
+        @font-face {
+            font-family: 'Mortal Kombat';
+            src: url('./assets/font/mk1.ttf');
+        }
+
+        body,
+        html {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #000000;
+            font-family: 'Mortal Kombat';
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border: #ff0000;
+            border-style: hidden;
+        }
+
+        .container img {
+            width: 60%;
+            height: 300px;
+            border: #ff0000;
+            border-style: hidden;
+        }
+
+        .container li {
+            margin-bottom: 5px;
+            border: #ff0000;
+            border-style: hidden;
+        }
+
+        .container ul {
+            margin-bottom: 5px;
+            list-style-type: none;
+            text-align: center;
+            padding: 0;
+            border: #ff0000;
+            border-style: hidden;
+        }
+
+        .container button {
+            font-family: 'Mortal Kombat';
+            font-size: 120px;
+            color: white;
+            border: none;
+            background-color: black;
+            cursor: pointer;
+            border: #ff0000;
+            border-style: hidden;
+        }
+
+        .container button:hover {
+            background-color: #000000;
+            color: #ff0000;
+        }
+    </style>
+</head>
+
+<body>
+
+    <audio id="myAudioGameMenu" src="./assets/audio/01_-_Start.ogg" muted></audio>
+
+    <div class="container">
+        <img src="./assets/image/gamePlayLogo100.PNG" alt="Description of the image">
+
+        <ul id="myList">
+            <li><button onclick="navigateTo('./chase.html')" class="button">Start Game</button></li>
+            <li><button class="button">Settings</button></li>
+            <li><button onclick="playButtonSound()" class="button">Lore</button></li>
+        </ul>
+    </div>
+
+</body>
+
+<script>
+
+    let myAudioGameMenu = document.getElementById('myAudioGameMenu');
+    myAudioGameMenu.play();
+    myAudioGameMenu.muted = false;
+
+    function navigateTo(url) {
+        window.location.href = url;
+    }
+
+    const buttons = document.querySelectorAll('button');
+    const myAudioMobDeath = new Audio('./assets/audio/arcade beep 01.wav');
+
+    buttons.forEach(button => {
+        button.addEventListener('mouseenter', function () {
+            myAudioMobDeath.play();
+        });
+
+        button.addEventListener('mouseleave', function () {
+            myAudioMobDeath.pause();
+            myAudioMobDeath.currentTime = 0;
+        });
+    });
+</script>
+
+</html>

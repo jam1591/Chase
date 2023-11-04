@@ -1,0 +1,171 @@
+<html>
+
+<head>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        #myCanvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        @font-face {
+            font-family: 'Mortal Kombat';
+            src: url('./assets/font/mk1.ttf');
+        }
+    </style>
+    <script src="./js/Mob.js"></script>
+    <script src="./js/Player.js"></script>
+    <script src="./js/updateGame.js"></script>
+    <script src="./js/Weapon.js"></script>
+    <script src="./js/Items.js"></script>
+
+</head>
+
+<body>
+    <canvas id="myCanvas" />
+    <audio id="myAudioMobDeath" src="./assets/audio/arcade action 04.wav" muted></audio>
+    <audio id="myAudioLevelUp" src="./assets/audio/arcade alarm 01.wav" muted></audio>
+    <audio id="myAudioStageOne" src="./assets/audio/03_-_First_Encounter.ogg" muted></audio>
+    <audio id="myAudioPowerUp" src="./assets/audio/arcade power up 03.wav" muted></audio>
+
+    <script>
+        let canvas = document.getElementById('myCanvas');
+        let ctx = canvas.getContext('2d');
+        let screenWidth = window.innerWidth;
+        let screenHeight = window.innerHeight;
+        canvas.width = screenWidth;
+        canvas.height = screenHeight;
+        canvas.style.cursor = 'none';
+        let score = 0;
+
+        //Future features
+        let weaponChoice = 0;
+
+        //Exp
+        let exp = 0;
+        let level = 0;
+
+        let killCounter = 0;
+        let spawnRate = 700 - killCounter;
+
+        //Item Chance + values
+        const dropChance = 0.20;
+        const healthDrop = 25;
+        const healthLevel = 100;
+        const damageDrop = 0.05;
+        const damageLevel = 0.05;
+        const rangeDrop = 5;
+        const rangeLevel = 5;
+
+        // Player
+        let hp = 100;
+        let player = {
+            size: 20,
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            speed: 10,
+            damage: 0.1 /* + (killCounter / 100) */
+        };
+
+        //circleWeapon
+        let circle = {
+            r: 30 /*+ killCounter */,
+            x: player.x + player.size / 2,
+            y: player.y + player.size / 2
+        };
+
+        const items = [
+            { id: 1, type: 'damage', unicode: '\u{1F525}' },
+            { id: 2, type: 'health', unicode: '\u{2764}' },
+            { id: 3, type: 'range', unicode: '\u{1F3AF}' }
+        ];
+
+        let genItems = [];
+        let pickedItems = [];
+        let mobSpeedModifier = 0;
+        let mobSizeModifier = 0;
+        let mobExp = 30;
+
+        //define mob
+        let mobs = [];
+        function addToDictionary() {
+            //Mob scaling
+            mobSpeedModifier = Math.round((score / 10000) * 100) / 100;
+            mobSizeModifier = Math.round((score / 100) * 100) / 100;
+
+            mob = {};
+            mob.name = Math.random();
+            mobs.push(mob);
+            mob.x = Math.random() * canvas.width;
+            mob.y = Math.random() * canvas.height;
+            mob.speed = Math.random() * 0.9 + mobSpeedModifier;
+            mob.size = 5 + mobSizeModifier;
+            mob.hp = mob.size;
+        }
+
+        //Closest distance between 2 objects
+        function collisionAI(objectOneX, objectOneW, objectTwoX, objectOneY, objectOneH, objectTwoY) {
+            let closestX = Math.max(objectOneX, Math.min(objectTwoX, objectOneX + objectOneW));
+            let closestY = Math.max(objectOneY, Math.min(objectTwoY, objectOneY + objectOneH));
+            let distanceX = objectTwoX - closestX;
+            let distanceY = objectTwoY - closestY;
+            return distanceSquared = distanceX * distanceX + distanceY * distanceY;
+        }
+
+        function createBox(x, y, w, h, fillStyle, shadowColor, shadowBlur) {
+            ctx.shadowColor = shadowColor;
+            ctx.shadowBlur = shadowBlur;
+            ctx.fillStyle = fillStyle;
+            ctx.fillRect(x, y, w, h);
+        }
+
+        function createCircle(x, y, r, fillStyle, lineWidth, strokeStyle, shadowColor, shadowBlur) {
+            ctx.shadowColor = shadowColor;
+            ctx.shadowBlur = shadowBlur;
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, 360);
+            ctx.fillStyle = fillStyle;
+            ctx.fill();
+            ctx.lineWidth = lineWidth;
+            ctx.strokeStyle = strokeStyle;
+            ctx.stroke();
+        }
+
+        function createText(text, x, y, fillStyle, shadowColor, shadowBlur, font) {
+            ctx.shadowColor = shadowColor;
+            ctx.shadowBlur = shadowBlur;
+            ctx.font = font;
+            ctx.fillStyle = fillStyle;
+            ctx.fillText(text, x, y);
+        }
+
+        //Listen to changes in the screen
+        document.addEventListener('mousemove', mobPath);
+        document.addEventListener('mousemove', mobKill);
+        document.addEventListener('mousemove', playerKill);
+        document.addEventListener('mousemove', playerPath);
+        document.addEventListener('mousemove', damageChoice);
+        document.addEventListener('mousemove', pickItem);
+        document.addEventListener('mousemove', pickItemTextDelete);
+
+        //Set Intervals
+        let gameMobIntervalID = setInterval(addToDictionary, spawnRate);
+        let gameLoopIntervalID = setInterval(updatePlayer, 16);
+
+        document.addEventListener('keyup', function (event) {
+            if (event.keyCode === 27) {
+                // Perform the desired action when the Escape key is pressed
+                console.log('Escape key pressed');
+                window.location.assign('index.html');
+            }
+        });
+    </script>
+</body>
+
+</html>
